@@ -1,0 +1,3 @@
+classes = 1
+train = vespa-orientalis-yolo-2022-7-2T154345/train.txt
+data = vespa-orientalis-yolo-2022-7-2T154345/obj.names
