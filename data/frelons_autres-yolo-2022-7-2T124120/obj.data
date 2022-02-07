@@ -1,3 +1,0 @@
-classes = 2
-train = frelons_autres-yolo-2022-7-2T124120/train.txt
-data = frelons_autres-yolo-2022-7-2T124120/obj.names
