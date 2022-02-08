@@ -1,3 +1,0 @@
-classes = 5
-train = dataset/train.txt
-data = dataset/obj.names
