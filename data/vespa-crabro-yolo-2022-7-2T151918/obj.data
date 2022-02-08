@@ -1,3 +1,0 @@
-classes = 1
-train = mm-yolo-2022-7-2T151918/train.txt
-data = mm-yolo-2022-7-2T151918/obj.names

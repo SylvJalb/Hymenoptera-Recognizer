@@ -1,3 +1,0 @@
-classes = 2
-train = bee_wasp-yolo-2022-7-2T150338/train.txt
-data = bee_wasp-yolo-2022-7-2T150338/obj.names

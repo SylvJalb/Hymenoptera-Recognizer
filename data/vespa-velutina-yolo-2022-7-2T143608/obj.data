@@ -1,3 +1,0 @@
-classes = 1
-train = tutorial-dataset-yolo-2022-7-2T143608/train.txt
-data = tutorial-dataset-yolo-2022-7-2T143608/obj.names
