@@ -1,10 +1,10 @@
 
-Hymenoptera - v2 2022-02-08 4:06pm
+Hymenoptera - v1 2022-02-10 10:54pm
 ==============================
 
-This dataset was exported via roboflow.ai on February 8, 2022 at 3:07 PM GMT
+This dataset was exported via roboflow.ai on February 10, 2022 at 10:02 PM GMT
 
-It includes 585 images.
+It includes 2031 images.
 Hymenoptera are annotated in YOLO v5 PyTorch format.
 
 The following pre-processing was applied to each image:
@@ -12,7 +12,6 @@ The following pre-processing was applied to each image:
 * Resize to 640x640 (Stretch)
 
 The following augmentation was applied to create 3 versions of each source image:
-* Random shear of between -15° to +15° horizontally and -15° to +15° vertically
-* Random Gaussian blur of between 0 and 1.5 pixels
+* Random shear of between -18° to +18° horizontally and -18° to +18° vertically
 
 
