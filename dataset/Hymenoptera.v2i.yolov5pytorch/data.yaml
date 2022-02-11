@@ -1,5 +1,0 @@
-train: ../dataset/Hymenoptera.v2i.yolov5pytorch/train/images
-val: ../dataset/Hymenoptera.v2i.yolov5pytorch/valid/images
-
-nc: 5
-names: ['Abeille', 'Guepe', 'Vespa Crabro', 'Vespa Orientalis', 'Vespa Velutina']
