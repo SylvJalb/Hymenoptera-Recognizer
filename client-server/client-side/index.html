@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Image Prediction</title>
+    </head>
+
+    <body>
+		<h1>JSON</h1>
+		<div>{</br>
+			&emsp;header: ['a', 'b', 'c'],</br>
+			&emsp;body: {</br>
+			&emsp;&emsp;1: ['value A1', 1, 'value C1'],</br>
+			&emsp;&emsp;2: ['value A2', 2, 'value C2', 65, 899],</br>
+			&emsp;&emsp;3: ['value A3', 3, 'value C3', 65],</br>
+			&emsp;&emsp;4: ['value A4', 4, 'value C4']</br> 
+			&emsp;}</br> 
+			}
+		</div>
+
+		</br>
+		
+		<h1>Table</h1>
+		<div id="table_service"></div>
+		
+		</br>
+		
+		<h1>Tips</h1>
+		<div id="table_service_tips"></div>
+		
+		</br></br>
+		
+		<small class="copyright">.:. Copyright &copy;2020-<script>document.write(new Date().getFullYear())</script>	CM-InnovationLab.it .:. All Rights Reserved .:.</small>
+    </body>
+
+	<script language="javascript">
+		let myJSON = {
+						header: ['a', 'b', 'c'], 
+						body: { 
+							1: ['value A1', 1, 'value C1'],
+							2: ['value A2', 2, 'value C2', 65, 899],
+							3: ['value A3', 3, 'value C3', 65],
+							4: ['value A4', 4, 'value C4']
+						} 
+					};
+	
+		var xhttp = new XMLHttpRequest();
+		var url = "http://www.cm-innovationlab.it:8081/table";
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				const obj = JSON.parse(this.responseText);
+				document.getElementById("table_service").innerHTML = obj.content;
+				document.getElementById("table_service_tips").innerHTML = obj.tips;
+			}
+		}
+		xhttp.open("POST", url);
+		xhttp.send(JSON.stringify(myJSON));
+	</script>
+</html>
