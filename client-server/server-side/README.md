@@ -16,6 +16,7 @@ pip install yolov5
 ### Install [FLASK](https://flask.palletsprojects.com/en/2.2.x/)
 ```bash
 pip install Flask
+pip install -U flask-cors
 ```
 
 ### Install SCREEN

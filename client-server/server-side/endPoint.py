@@ -14,6 +14,7 @@ model.max_det = 20  # maximum number of detections per image
 
 
 from flask import Flask, request
+from flask_cors import CORS
 import shutil
 import base64
 import json
@@ -21,6 +22,7 @@ import json
 counter = -1
 
 myEndPoint = Flask(__name__)
+cors = CORS(myEndPoint)
 
 @myEndPoint.route("/api/v2/test", methods = ['GET'])
 def test():

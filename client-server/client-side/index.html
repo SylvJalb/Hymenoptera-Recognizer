@@ -5,54 +5,124 @@
     </head>
 
     <body>
-		<h1>JSON</h1>
-		<div>{</br>
-			&emsp;header: ['a', 'b', 'c'],</br>
-			&emsp;body: {</br>
-			&emsp;&emsp;1: ['value A1', 1, 'value C1'],</br>
-			&emsp;&emsp;2: ['value A2', 2, 'value C2', 65, 899],</br>
-			&emsp;&emsp;3: ['value A3', 3, 'value C3', 65],</br>
-			&emsp;&emsp;4: ['value A4', 4, 'value C4']</br> 
-			&emsp;}</br> 
-			}
-		</div>
+
+		<h1>Stato del Servizio</h1>
+		<div id="service_status"></div>
+		
+		</br>
+
+
+			<input type="file" id="userImagePath" name="userImagePath"  accept="image/*">
+			<button onclick="handleImageUpload()">Invia</button>
 
 		</br>
+
+
 		
-		<h1>Table</h1>
-		<div id="table_service"></div>
+		<h1>ID Richiesta</h1>
+		<div id="request_id"></div>
 		
 		</br>
+			
+		<h1>Analisi</h1>
+		<div id="analysis"></div>
 		
-		<h1>Tips</h1>
-		<div id="table_service_tips"></div>
-		
+		</br>
+				
+		<h1>Immagine</h1>
+		<div id="response_image"></div>
+
 		</br></br>
 		
 		<small class="copyright">.:. Copyright &copy;2020-<script>document.write(new Date().getFullYear())</script>	CM-InnovationLab.it .:. All Rights Reserved .:.</small>
     </body>
 
 	<script language="javascript">
-		let myJSON = {
-						header: ['a', 'b', 'c'], 
-						body: { 
-							1: ['value A1', 1, 'value C1'],
-							2: ['value A2', 2, 'value C2', 65, 899],
-							3: ['value A3', 3, 'value C3', 65],
-							4: ['value A4', 4, 'value C4']
-						} 
-					};
-	
 		var xhttp = new XMLHttpRequest();
-		var url = "http://www.cm-innovationlab.it:8081/table";
+		var url = "http://127.0.0.1:5001/api/v2/test";
 		xhttp.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
 				const obj = JSON.parse(this.responseText);
-				document.getElementById("table_service").innerHTML = obj.content;
-				document.getElementById("table_service_tips").innerHTML = obj.tips;
+				document.getElementById("service_status").innerHTML = obj.status;
 			}
 		}
-		xhttp.open("POST", url);
-		xhttp.send(JSON.stringify(myJSON));
+		xhttp.open("GET", url);
+		xhttp.send();
+
+
+
+
+
+
+		const formData = new FormData()
+
+
+		function handleImageUpload () {
+		//	const handleImageUpload = event => {
+			
+
+
+
+
+			var xhttp2 = new XMLHttpRequest();
+			var url = "http://127.0.0.1:5001/api/v2/img/inference";
+			xhttp2.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					const obj = JSON.parse(this.responseText);
+					document.getElementById("request_id").innerHTML = obj.counter;
+					document.getElementById("analysis").innerHTML = obj.analysis;
+					document.getElementById("response_image").innerHTML = obj.image;
+				}
+			}
+			xhttp2.open("POST", url);
+			//xhttp2.setRequestHeader('Content-Type','multipart/form-data')
+			xhttp2.send(formData);
+
+
+
+
+
+
+
+
+/*
+			fetch('http://127.0.0.1:5001/api/v2/img/inference', {
+				method: 'POST',
+				body: formData
+				//xhttp2.setRequestHeader('Content-Type','multipart/form-data')
+			})
+			.then(response => response.json())
+			.then(data => {
+				console.log(data.path)
+			//	const obj = JSON.parse(this.responseText);
+			//		document.getElementById("request_id").innerHTML = obj.counter;
+			//		document.getElementById("analysis").innerHTML = obj.analysis;
+			//		document.getElementById("response_image").innerHTML = obj.image;
+			})
+			.catch(error => {
+				console.error(error)
+			})*/
+		}
+
+
+		document.querySelector('#userImagePath').addEventListener('change', event => {
+			formData.append('userImage', event.target.files[0])
+			//handleImageUpload(event)
+		})
+
+
+
+	
+			
+	
+
+
+
+
+
+
+
+
+	
 	</script>
 </html>
