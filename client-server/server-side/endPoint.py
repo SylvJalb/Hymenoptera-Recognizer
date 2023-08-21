@@ -9,7 +9,7 @@ print('Model Loaded!')
 model.conf = 0.25  # NMS confidence threshold
 model.iou = 0.45  # NMS IoU threshold
 model.agnostic = False  # NMS class-agnostic
-model.multi_label = False  # NMS multiple labels per box
+model.multi_label = True  # NMS multiple labels per box
 model.max_det = 20  # maximum number of detections per image
 
 
@@ -71,12 +71,12 @@ def predict_image():
 
     #yoloPrediction.show()
 
-    image_file = 'responseImage.jpg'
+    image_file = 'inputImage.jpg'
     # Save results
     yoloPrediction.save(image_file)
 
     #Bytes convertion
-    with open(image_file, "rb") as f:
+    with open("runs/detect/exp/" + image_file, "rb") as f:
         im_bytes = f.read()        
     im_b64 = base64.b64encode(im_bytes).decode("utf8")
 

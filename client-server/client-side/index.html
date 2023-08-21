@@ -1,128 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Image Prediction</title>
+        <title>AI Save Queen Bees</title>
     </head>
 
-    <body>
+    <body style="font: 15px 'Arial';">
 
-		<h1>Stato del Servizio</h1>
-		<div id="service_status"></div>
-		
-		</br>
-
-
-			<input type="file" id="userImagePath" name="userImagePath"  accept="image/*">
-			<button onclick="handleImageUpload()">Invia</button>
+		<img src="CM-InnovationLab.it logo.png" alt="cm-innovationlab_logo" width="100" height="100" style="border-radius: 50%; display: block; margin-left: auto; margin-right: auto;">
 
 		</br>
-
-
 		
-		<h1>ID Richiesta</h1>
-		<div id="request_id"></div>
+		<span id="service_status"></span>
 		
-		</br>
-			
-		<h1>Analisi</h1>
-		<div id="analysis"></div>
-		
-		</br>
-				
-		<h1>Immagine</h1>
-		<div id="response_image"></div>
-
 		</br></br>
+
+		<fieldset id="fieldset_status">
+
+			<fieldset id="inputField">
+				<legend>Carica ed invia un'immagine al modello di AI:</legend>
+				<form onsubmit="imageUpload();return false">
+					<input type="file" id="userImagePath" name="userImagePath"  accept="image/*"></br></br>
+					<input type="submit"/>
+				</form>
+			</fieldset>
+
+			</br>
+			
+			<fieldset id="output" hidden>
+				<legend>Risposta dal modello di AI:</legend>
+
+				<label for="request_id" style="font-weight: bold;">ID Richiesta:</label>
+				<span id="request_id" name="request_id"></span>
+				
+				</br></br>
+					
+				<label for="analysis" style="font-weight: bold;">Analisi del Modello:</label>
+				<div id="analysis" name="analysis"></div>
+				
+				</br>
+
+				<label for="response_image" style="font-weight: bold;">Immagine Elaborata dal Modello:</label>
+				</br>
+				<img id="response_image" name="response_image"></img>
+
+				</br>
+			</fieldset>
+
+		</fieldset>
+
+		</br>
 		
-		<small class="copyright">.:. Copyright &copy;2020-<script>document.write(new Date().getFullYear())</script>	CM-InnovationLab.it .:. All Rights Reserved .:.</small>
-    </body>
+		<small>.:. CM-InnovationLab.it .:. <a href="https://github.com/CampominosiMarco/Hymenoptera-Recognizer" target="_blank">Progetto Open Source</a> .:.</small>
+    
+	</body>
 
 	<script language="javascript">
+
+		//this first request check if servise is up
 		var xhttp = new XMLHttpRequest();
 		var url = "http://127.0.0.1:5001/api/v2/test";
 		xhttp.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
 				const obj = JSON.parse(this.responseText);
-				document.getElementById("service_status").innerHTML = obj.status;
+				document.getElementById("service_status").innerHTML = "Servizio attivo, procedi caricando una foto per inviarla al modello di AI.";	//obj.status
+				document.getElementById("fieldset_status").removeAttribute("hidden");
+			}else{
+				document.getElementById("service_status").innerHTML = "Siamo spiacenti ma il servizio è in manutenzione.</br>" +
+																	"Per urgenze contattare <a href= 'mailto:marco.campominosi@cm-innovationlab.it'>" +
+																	"marco.campominosi@cm-innovationlab.it</a>";
+				document.getElementById("fieldset_status").setAttribute("hidden", "");
 			}
 		}
 		xhttp.open("GET", url);
 		xhttp.send();
 
-
-
-
-
-
+		//This is formData needed for POST request
 		const formData = new FormData()
 
+		//This is a foundamental listener to update formData with user image
+		document.querySelector('#userImagePath').addEventListener('change', event => {
+			formData.delete("userImage");
+			formData.append('userImage', event.target.files[0])
+			document.getElementById("output").setAttribute("hidden", "");
+		})
 
-		function handleImageUpload () {
-		//	const handleImageUpload = event => {
-			
-
-
-
-
+		//This function made inference on model
+		function imageUpload() {
 			var xhttp2 = new XMLHttpRequest();
 			var url = "http://127.0.0.1:5001/api/v2/img/inference";
 			xhttp2.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
 					const obj = JSON.parse(this.responseText);
 					document.getElementById("request_id").innerHTML = obj.counter;
-					document.getElementById("analysis").innerHTML = obj.analysis;
-					document.getElementById("response_image").innerHTML = obj.image;
+					document.getElementById("analysis").innerHTML = getAnalysisData(obj.analysis);
+					getImageResponse(obj.image);
+					document.getElementById("output").removeAttribute("hidden");
 				}
 			}
 			xhttp2.open("POST", url);
 			//xhttp2.setRequestHeader('Content-Type','multipart/form-data')
 			xhttp2.send(formData);
-
-
-
-
-
-
-
-
-/*
-			fetch('http://127.0.0.1:5001/api/v2/img/inference', {
-				method: 'POST',
-				body: formData
-				//xhttp2.setRequestHeader('Content-Type','multipart/form-data')
-			})
-			.then(response => response.json())
-			.then(data => {
-				console.log(data.path)
-			//	const obj = JSON.parse(this.responseText);
-			//		document.getElementById("request_id").innerHTML = obj.counter;
-			//		document.getElementById("analysis").innerHTML = obj.analysis;
-			//		document.getElementById("response_image").innerHTML = obj.image;
-			})
-			.catch(error => {
-				console.error(error)
-			})*/
 		}
 
+		//This function is necessary to obtain information from ML model analysis
+		function getAnalysisData(responseObject){
+			output = ""
+			for (i = 0; i < 20; i++) {		//20 is max detection value for my AI config
+				if (responseObject[i] != undefined){
 
-		document.querySelector('#userImagePath').addEventListener('change', event => {
-			formData.append('userImage', event.target.files[0])
-			//handleImageUpload(event)
-		})
+					let name = responseObject[i].replace('_', ' - Probabilità: ')
 
+					if (name.startsWith('Ape')){
+						output += "<span style='color:green;'>" + name + "</span> [etichetta: 'Abeille', colore: Rosso]</br>";
+					}else if(name.startsWith('Vespa Orientale')){
+						output += "<span style='color:orange; font-weight: bold;'>" + name + "</span> [etichetta: 'Vespa Orientalis', colore: Arancione chiaro]</br>";
+					}else if(name.startsWith('Vespa')){
+						output += "<span style='color:green;'>" + name + "</span> [etichetta: 'Guepe', colore: Rosa]</br>";
+					}else if(name.startsWith('Calabrone Europeo')){
+						output += "<span style='color:purple; font-weight: bold;'>" + name + "</span> [etichetta:' Vespa Crabro', colore: Arancione]</br>";
+					}else if(name.startsWith('Velutina (Calabrone Asiatico)')){
+						output += "<span style='color:red; font-weight: bold;'>" + name + "</span> [etichetta: 'Vespa Velutina', colore: Giallo]</br>";
+					}
+				}else{
+					if (output == ""){
+						output = "Nessun rilevamento nell'immagine inviata.</br>Riprovare con altra immagine."
+					}
+					break;
+				}
+			}
+			return output;
+		}
 
-
-	
-			
-	
-
-
-
-
-
-
-
-
-	
+		//This function convert model answer to image
+		function getImageResponse(responseObject){
+			var base64img = "data:image/png;base64," + responseObject;
+			document.getElementById('response_image').src = base64img;
+		}
 	</script>
 </html>
