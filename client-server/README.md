@@ -29,3 +29,12 @@ pip install screen
 screen
 flask --app endPoint run --host=0.0.0.0 --port 5001
 ```
+---
+---
+# Client-side implementation
+In "client-side" folder you can find a possible usage of this web service. After a rapid check on service status, user can:
+
+* Select an image
+* Send image selected to server for Model Analysis
+* Read Model analysis results
+* Check on response image model result boxes
