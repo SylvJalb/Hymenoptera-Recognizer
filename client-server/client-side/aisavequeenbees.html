@@ -3,9 +3,24 @@
     <head>
         <title>AI Save Queen Bees</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+			/*Mobile optimization*/
+			@media only screen and (max-width: 500px) {
+				#response_image {
+					max-width: 300px;
+					height: auto;
+				}
+			}
+
+			input[type="file"]::file-selector-button {
+				background-color: blue;
+				color: white;
+				height: 30px;
+			}
+		</style>
     </head>
 
-    <body style="font: 15px 'Arial';">
+    <body>
 
 		<img src="CM-InnovationLab.it logo.png" alt="cm-innovationlab_logo" width="100" height="100" style="border-radius: 50%; display: block; margin-left: auto; margin-right: auto;">
 
@@ -18,14 +33,17 @@
 		<fieldset id="fieldset_status">
 
 			<fieldset id="inputField">
-				<legend>Carica ed invia un'immagine al modello di AI:</legend>
+				<legend>Invia un'immagine al modello di AI:</legend>
+				</br>
 				<form onsubmit="imageUpload();return false">
-					<input type="file" id="userImagePath" name="userImagePath"  accept="image/*"></br></br>
-					<input type="submit"/></br></br>
-					<p><u>Le immagini inviate saranno utilizzate solo per identificare api, calabroni e vespe.</u></br>
-						Si chiede agli utenti di non sovraccaricare il server con richieste inutili.</br>
-						Si ricorda che la previsione del modello è solo indicativa ed è preferibile</br>
-						inquadrare un insetto alla volta per ottenere una risposta più accurata.</p>
+					<input type="file" id="userImagePath" name="userImagePath"  accept="image/*">
+					<span id="sizeImageInfo"></span> </br></br></br></br>
+					<input type="submit" style="height: 30px; background-color: blue; color: white;" value="Invia Immagine al modello"/><span id="timeInfo"></span> </br></br>
+					<p><u>Le immagini inviate saranno utilizzate solo per identificare api, calabroni e vespe.</u> 
+						Si chiede agli utenti di non sovraccaricare il server con richieste inutili. 
+						Si suggerisce di inquadrare un insetto alla volta per ottenere una risposta più accurata.</p>
+					<p style="color: red; font-weight: bold;"><u>Le informazioni ottenute dal modello di Intelligenza Artificiale sono da ritenersi puramente indicative e 
+						non garantiscono l'esatta classificazione degli insetti nelle immagini.</u></p>
 				</form>
 			</fieldset>
 
@@ -85,7 +103,17 @@
 		//This is a foundamental listener to update formData with user image
 		document.querySelector('#userImagePath').addEventListener('change', event => {
 			formData.delete("userImage");
-			formData.append('userImage', event.target.files[0])
+			document.getElementById("sizeImageInfo").innerHTML = "";
+			document.getElementById("timeInfo").innerHTML = "";
+
+			if (event.target.files[0] != undefined){
+				//Check dimensions and time			
+				document.getElementById("sizeImageInfo").innerHTML = "  [" + Math.trunc(event.target.files[0].size / 1000) + " KB]";
+				document.getElementById("timeInfo").innerHTML = "  " + Math.trunc(event.target.files[0].size / 70000) + " secondi stimati per ottenere una previsione.";
+
+				formData.append('userImage', event.target.files[0])
+			}
+
 			document.getElementById("output").setAttribute("hidden", "");
 		})
 
