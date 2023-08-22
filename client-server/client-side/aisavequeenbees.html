@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>AI Save Queen Bees</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+			/*Mobile optimization*/
+			@media only screen and (max-width: 500px) {
+				#response_image {
+					max-width: 300px;
+					height: auto;
+				}
+			}
+
+			input[type="file"]::file-selector-button {
+				background-color: blue;
+				color: white;
+				height: 30px;
+			}
+		</style>
+    </head>
+
+    <body>
+
+		<img src="CM-InnovationLab.it logo.png" alt="cm-innovationlab_logo" width="100" height="100" style="border-radius: 50%; display: block; margin-left: auto; margin-right: auto;">
+
+		</br>
+		
+		<span id="service_status"></span>
+		
+		</br></br>
+
+		<fieldset id="fieldset_status">
+
+			<fieldset id="inputField">
+				<legend>Invia un'immagine al modello di AI:</legend>
+				</br>
+				<form onsubmit="imageUpload();return false">
+					<input type="file" id="userImagePath" name="userImagePath"  accept="image/*">
+					<span id="sizeImageInfo"></span> </br></br></br></br>
+					<input type="submit" style="height: 30px; background-color: blue; color: white;" value="Invia Immagine al modello"/><span id="timeInfo"></span> </br></br>
+					<p><u>Le immagini inviate saranno utilizzate solo per identificare api, calabroni e vespe.</u> 
+						Si chiede agli utenti di non sovraccaricare il server con richieste inutili. 
+						Si suggerisce di inquadrare un insetto alla volta per ottenere una risposta più accurata.</p>
+					<p style="color: red; font-weight: bold;"><u>Le informazioni ottenute dal modello di Intelligenza Artificiale sono da ritenersi puramente indicative e 
+						non garantiscono l'esatta classificazione degli insetti nelle immagini.</u></p>
+				</form>
+			</fieldset>
+
+			</br>
+			
+			<fieldset id="output" hidden>
+				<legend>Risposta dal modello di AI:</legend>
+
+				<label for="request_id" style="font-weight: bold;">ID Richiesta:</label>
+				<span id="request_id" name="request_id"></span>
+				
+				</br></br>
+					
+				<label for="analysis" style="font-weight: bold;">Analisi del Modello:</label>
+				<div id="analysis" name="analysis"></div>
+				
+				</br>
+
+				<label for="response_image" style="font-weight: bold;">Immagine Elaborata dal Modello:</label>
+				</br>
+				<img id="response_image" name="response_image"></img>
+
+				</br>
+			</fieldset>
+
+		</fieldset>
+
+		</br>
+		
+		<small>.:. CM-InnovationLab.it .:. <a href="https://github.com/CampominosiMarco/Hymenoptera-Recognizer" target="_blank">Progetto Open Source</a> .:.</small>
+    
+	</body>
+
+	<script language="javascript">
+
+		//this first request check if servise is up
+		var xhttp = new XMLHttpRequest();
+		var url = "http://www.cm-innovationlab.it:5001/api/v2/test";
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				const obj = JSON.parse(this.responseText);
+				document.getElementById("service_status").innerHTML = "Servizio attivo, procedi caricando una foto per inviarla al modello di AI.";	//obj.status
+				document.getElementById("fieldset_status").removeAttribute("hidden");
+			}else{
+				document.getElementById("service_status").innerHTML = "Siamo spiacenti ma il servizio è in manutenzione.</br>" +
+																	"Per urgenze contattare <a href= 'mailto:marco.campominosi@cm-innovationlab.it'>" +
+																	"marco.campominosi@cm-innovationlab.it</a>";
+				document.getElementById("fieldset_status").setAttribute("hidden", "");
+			}
+		}
+		xhttp.open("GET", url);
+		xhttp.send();
+
+		//This is formData needed for POST request
+		const formData = new FormData()
+
+		//This is a foundamental listener to update formData with user image
+		document.querySelector('#userImagePath').addEventListener('change', event => {
+			formData.delete("userImage");
+			document.getElementById("sizeImageInfo").innerHTML = "";
+			document.getElementById("timeInfo").innerHTML = "";
+
+			if (event.target.files[0] != undefined){
+				//Check dimensions and time			
+				document.getElementById("sizeImageInfo").innerHTML = "  [" + Math.trunc(event.target.files[0].size / 1000) + " KB]";
+				document.getElementById("timeInfo").innerHTML = "  " + Math.trunc(event.target.files[0].size / 70000) + " secondi stimati per ottenere una previsione.";
+
+				formData.append('userImage', event.target.files[0])
+			}
+
+			document.getElementById("output").setAttribute("hidden", "");
+		})
+
+		//This function made inference on model
+		function imageUpload() {
+			var xhttp2 = new XMLHttpRequest();
+			var url = "http://www.cm-innovationlab.it:5001/api/v2/img/inference";
+			xhttp2.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					const obj = JSON.parse(this.responseText);
+					document.getElementById("request_id").innerHTML = obj.counter;
+					document.getElementById("analysis").innerHTML = getAnalysisData(obj.analysis);
+					getImageResponse(obj.image);
+					document.getElementById("output").removeAttribute("hidden");
+				}
+			}
+			xhttp2.open("POST", url);
+			//xhttp2.setRequestHeader('Content-Type','multipart/form-data')
+			xhttp2.send(formData);
+		}
+
+		//This function is necessary to obtain information from ML model analysis
+		function getAnalysisData(responseObject){
+			output = ""
+			for (i = 0; i < 20; i++) {		//20 is max detection value for my AI config
+				if (responseObject[i] != undefined){
+
+					let name = responseObject[i].replace('_', ' - Probabilità: ')
+
+					if (name.startsWith('Ape')){
+						output += "<span style='color:green;'>" + name + "</span> [etichetta: 'Abeille', colore: Rosso]</br>";
+					}else if(name.startsWith('Vespa Orientale')){
+						output += "<span style='color:orange; font-weight: bold;'>" + name + "</span> [etichetta: 'Vespa Orientalis', colore: Arancione chiaro]</br>";
+					}else if(name.startsWith('Vespa')){
+						output += "<span style='color:green;'>" + name + "</span> [etichetta: 'Guepe', colore: Rosa]</br>";
+					}else if(name.startsWith('Calabrone Europeo')){
+						output += "<span style='color:purple; font-weight: bold;'>" + name + "</span> [etichetta:' Vespa Crabro', colore: Arancione]</br>";
+					}else if(name.startsWith('Velutina (Calabrone Asiatico)')){
+						output += "<span style='color:red; font-weight: bold;'>" + name + "</span> [etichetta: 'Vespa Velutina', colore: Giallo]</br>";
+					}
+				}else{
+					if (output == ""){
+						output = "Nessun rilevamento nell'immagine inviata.</br>Riprovare con altra immagine."
+					}
+					break;
+				}
+			}
+			return output;
+		}
+
+		//This function convert model answer to image
+		function getImageResponse(responseObject){
+			var base64img = "data:image/png;base64," + responseObject;
+			document.getElementById('response_image').src = base64img;
+		}
+	</script>
+</html>
